@@ -1,0 +1,169 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+# INSTITUTO TECNOLÓGICO Y DE ESTUDIOS SUPERIORES MONTERREY
+# LABORATORIO DE DISEÑO Y OPTIMIZACIÓN DE   OPERACIONES
+
+# Actividad_7_Equipo02_Análisis_Exploratorio_de_Datos
+
+# Profesora:
+# Ana Luisa Masetto Herrera
+
+# Integrantes:
+
+# Alejandra Santillan Palos
+# A01365626
+
+# Eda Eraldí Martínez Vázquez
+# A01365784
+
+# Justine Gutiérrez Mendoza
+# A01365878
+
+# José Luis Estrada Bastida
+# A01365811
+
+# Guillermo Martínez Ávila
+# A01365593
+
+# Fecha de entrega:
+# 27 de septiembre, 2021
+
+# 1. Descripción a detalle de los datos:
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+datos_limpios <- read.csv("equipo_2_zte_datos_limpios.csv")
+```
+
+```{r}
+str(datos_limpios)
+```
+
+Punto de venta: Se tienen 1457 números de puntos de venta (entre los cuales esta 1 poniente, 5 de mayo zmm, acayucan, ace alianza manzanillo centro, etc)
+
+```{r}
+
+puntos_de_ventas <- unique(datos_limpios$punto_de_venta)
+head(puntos_de_ventas)
+```
+
+Fecha: Las fechas en las que se realizaron la ventas son entre el 1 de junio de 2019 y el 30 de marzo de 2020
+
+Mes: Los meses en los que se realizará son entre 1 y 12 y cada número es referente al mes (es decir 1=enero, 2=febrero, 3=marzo, 4=abril, 5=mayo, 6=junio, 7=julio, 8=agosto, 9=septiembre, 10=octubre, 11=noviembre, 12=diciembre)
+
+Anio: Los años durante la realización fueron 2019 y 2020
+
+num_ventas: los números de ventas fueron solamente de 1
+
+sku: el sku hay 29, entre ellos N.6045I, N.6045ID, N.A475B,N.A5054SD, N.A5098OD,N.A5098ON, N.AA3PLNG, N.ALC5010N, N.ALCP4SN, N.ALCP4SN, NALU5DR, N.ALU5NG, N.LX520DR, N.LX520NG, N.OT5054S, N.TCLFWAAZ, N.TCLFWARS, N.ZTA321A, N.ZTA321AB, N.ZTA321G, N.ZTA321GB, N.ZTA521B, N.ZTA521N, N.ZTEA511D, N.ZTEA511N, N.ZTEA6NG, N.ZTEA6PT, N.ZV8MDR, N.ZV8MNG, N.ZV8MPN.
+
+marca: La única marca que se tiene es zte
+
+gamma: la gamma que se maneja solo es gamma baja
+
+costo_promedio: hay 28 costos promedios diferentes (desde 0 hasta 2470.788782)
+
+```{r}
+costo <- unique(datos_limpios$costo_promedio)
+head(costo)
+```
+
+
+zona: Se encuentran 9 zonas diferentes (Centro Occidente, Centro Sur, Golfo de México, Noreste, Noroeste, Norte, Pacifico Sur y Península de Yucatán)
+
+estado: Existen 32 estados que se utilizan (Cdmx, Aguascalientes, Baja California, Baja California Sur, Campeche, Coahuila, Colima, Chiapas, Chihuahua, Durango, Distrito Federal, Guanajuato, Guerrero, Hidalgo, Jalisco, México, Michoacán, Morelos, Nayarit, Nuevo León, Oaxaca, Puebla, Querétaro, Quintana Roo, San Luis Potosí, Sinaloa, Sonora, Tabasco, Tamaulipas, Tlaxcala, Veracruz, Yucatán, y Zacatecas.)
+
+ciudad: hay muchas ciudades ya que cada estado tiene varias ciudades utilizadas (por ejemplo: Acambaro, Acapulco, Adolfo Lopez Mateos, Agua dulce, aguascalientes, allende, etc)
+
+```{r}
+ciudad <- unique(datos_limpios$ciudad)
+head(ciudad)
+```
+
+latitud: Hay mucha variación en las coordenadas de latitud ya que dependen a los puntos de venta
+
+longitud: Las coordenadas de longitud son dependientes de los puntos de venta por lo que existe una gran variedad de estas
+
+
+
+# 2. Gráficas con información de los datos:
+
+# Gráfica 1
+
+```{r, fig.height=8, fig.width=16}
+ggplot(datos_limpios, aes(x = forcats::fct_infreq(zona), fill = zona)) +
+  geom_bar() +
+  theme_classic()+
+  xlab("Zona de venta") +
+  ylab("Número de ventas") +
+  scale_fill_manual(values=c("chocolate1","chocolate4","chocolate1","chocolate1","chocolate1","chocolate1","lightsalmon","lightsalmon"))+
+  theme(axis.text=element_text(size=14),
+    axis.title=element_text(size=14,face="italic"),
+    title = element_text(size=22,face="italic"))+
+  labs(title="Ventas totales de la empresa zte por Zona de Ventas")
+
+```
+
+# Descripción de las gráfica 1: ¿Qué se puede observar? ¿Por qué es importante contar con esa información? 
+
+# ANALISIS: Gracias a esta grafica podemos observar que la zona que más genera ventas es la del Centro Sur, y que la zona con menos ventas es las Pacifico Sur, tambien podemos observar que las zonas del Norte, Golfo de México y el Noreste tienen una ligera variacion pero se puede observar que se encuentran en el mismo rango, tambien nos podemos percatar que hay una gran diferencia en el total de ventas de las zonas, se observa que hay un incremento que es el más notorio en el Centro Sur, esto nos ayuda a poner atencion y realizar un plan de accion para que las ventas aumenten en las demás zonas.
+
+# Gráfica 2
+
+```{r}
+datos_limpios$num_ventas <- as.numeric(datos_limpios$num_ventas)
+datosy <- aggregate(num_ventas ~ mes, data = datos_limpios, sum)
+datosy[1,1] <- 13
+datosy[2,1] <- 14
+datosy[3,1] <- 15
+```
+
+```{r, fig.height=8, fig.width=16}
+ggplot(datosy,aes(x = mes, y = num_ventas))+  
+  scale_x_continuous(breaks = c(6,7,8,9,10,11,12,13,14,15), labels = c("Junio 19","Julio 19","Agosto 19","Septiembre 19","Octubre 19","Noviembre 19","Diciembre 19","Enero 20","Febrero 20","Marzo 20")) + 
+  geom_point()+
+  geom_line()+
+  theme_classic()+
+  xlab("Mes de año") +
+  ylab("Número de ventas")+
+  geom_smooth(method = "lm")+
+  theme(axis.text=element_text(size=14),
+    axis.title=element_text(size=14,face="italic"),
+    title = element_text(size=22,face="italic"))+
+  labs(title="Ventas totales por mes")
+```
+
+# Descripción de las gráfica 2: ¿Qué se puede observar? ¿Por qué es importante contar con esa información? 
+# ANALISIS: Al realizar esta grafica podemos observar que hay una tendencia negativa, se puede observar que conforme han pasado los meses el numero de ventas ha caido, podemos observar un crecimiento muy presipitado desde el mes de Septiembre hasta el mes de Noviembre del 2019, se recomienda analizar que medidas se tomaron para conocer lo que beneficia a las ventas de la empresa, por otro lado luego de Noviembre las ventas han caido y han permanesido en caida desde ese mes, se recomienda hacer un plan de accion para mejorar o incentivar las ventas.
+
+# Gráfica 3
+```{r}
+g3 <- datos_limpios %>% group_by(sku)
+
+```
+```{r, fig.height=50, fig.width=40}
+ggplot(g3, aes(x = forcats::fct_infreq(sku), fill = sku)) +
+  geom_bar() +
+  theme_classic()+
+  xlab("SKU") +
+  ylab("Número de ventas") +
+  facet_grid(zona ~.) +
+  scale_fill_manual(values=c("lightsalmon","lightsalmon","lightsalmon","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate1","chocolate3","chocolate3","chocolate1","chocolate1","chocolate1","chocolate3","chocolate1","chocolate4","chocolate3"))+
+  theme(axis.text=element_text(size=18),
+    axis.title=element_text(size=24,face="italic"),
+    title = element_text(size=32,face="italic"))+
+  labs(title="Ventas totales de la empresa zte por SKU y zona de ventas")
+
+```
+
+# Descripción de las gráfica 3: ¿Qué se puede observar? ¿Por qué es importante contar con esa información?
+# ANALISIS: El SKU recoge información para identificar cada producto en función de su color, precio, marca, talla, tamaño, fabricante. La combinación y el orden de las letras y números depende de la prioridad que necesite cada vendedor, siempre determinada por las necesidades del comprador y el objetivo de la empresa, con esta grafica podemos observar que es lo que vende más la empresa, en este caso el bestseller es el N.ZV8MPN en 7 de las 8 zonas de venta marcado en el color más obscuro y seguido por el SKU NZTA521N, y el que ha registrado menos ventas ha sido el N.A475B, marcado en el color más claro pero casi imperceptible por sus pocas ventas, esta grafica es de gran ayuda ya que nos indica que es lo que más utilidades nos genera y tambien lo que refresenta perdidas de una forma más visual y nos ordena los datos de manera descendete para identificar fácilmente nuestros focos rojos.
+
+
+

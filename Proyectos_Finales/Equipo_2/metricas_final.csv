@@ -1,0 +1,17 @@
+metrica,conjunto,mes,modelo_base,dt_1_profundidad,dt_5_profundidd
+mae,entrenamiento,julio,,0.107827,0.099591
+mae,entrenamiento,agosto,,0.075143,0.069818
+mae,entrenamiento,septiembre,,0.054836,0.051484
+mae,entrenamiento,octubre,,0.061179,0.058564
+mae,entrenamiento,noviembre,,0.079885,0.080747
+mae,entrenamiento,diciembre,,0.072606,0.083584
+mae,entrenamiento,enero,,0.065324,0.07377
+mae,entrenamiento,febrero,,0.058543,0.065992
+mae,prueba,Agosto,0.121021,0.056611,0.077675
+mae,prueba,septiembre,0.080941,0.014224,0.018863
+mae,prueba,octubre,0.090195,0.080207,0.079947
+mae,prueba,noviembre,0.164722,0.154711,0.153528
+mae,prueba,diciembre,0.12979,0.060161,0.170497
+mae,prueba,enero,0.103081,0.021632,0.026602
+mae,prueba,febrero,0.035583,0.011076,0.011526
+mae,prueba,marzo,0.015952,0.001302,0.001538
