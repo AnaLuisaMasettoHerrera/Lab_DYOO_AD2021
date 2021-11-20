@@ -1,0 +1,93 @@
+---
+title: "motorola_limpieza"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+#data()
+```
+
+```{r}
+datos1 <- read.csv("equipo_4_motorola_datos_sucios.csv")
+```
+
+```{r}
+datos1$mes <- str_replace(datos1$mes, "JUL", "7")
+datos1$mes <- str_replace(datos1$mes, "AGOSTO", "8")
+datos1$mes <- str_replace(datos1$mes, "NOV", "11")
+datos1$mes <- str_replace(datos1$mes, "DIC", "12")
+datos1$mes <- str_replace(datos1$mes, "FEB", "2")
+```
+
+```{r}
+datos1$anio <- str_replace(datos1$anio, "2018", "xxxx")
+datos1$anio <- str_replace(datos1$anio, "18", "2018")
+datos1$anio <- str_replace(datos1$anio, "xxxx", "2018")
+```
+
+```{r}
+datos1$marca <- str_replace(datos1$marca, "mMotorola", "motorola")
+datos1$marca <- str_replace(datos1$marca, "Motorola-motorola", "motorola")
+```
+
+```{r}
+datos1$zona <- str_replace(datos1$zona, "GOLFO DE MEX", "golfo de mexico")
+```
+
+```{r}
+datos1$estado <- str_replace(datos1$estado, "tehuacan", "puebla")
+datos1$estado <- str_replace(datos1$estado, "toluca", "estado de mexico")
+datos1$estado <- str_replace(datos1$estado, "acapulco", "guerrero")
+```
+
+```{r}
+datos1$latitud <- str_replace(datos1$latitud, "1793999", "17.93999")
+```
+
+```{r}
+datos1$longitud <- str_replace(datos1$longitud, "-949106", "-94.9106")
+```
+
+```{r}
+datos1$ciudad <- str_replace(datos1$ciudad, "naucalpan.", "naucalpan")
+datos1$ciudad <- str_replace(datos1$ciudad, "tlaneplantla", "tlanepantla")
+datos1$ciudad <- str_replace(datos1$ciudad, "ciudad cuauhtemoc", "cuahutemoc")
+datos1$ciudad <- str_replace(datos1$ciudad, "tuxtla gutierrez gutierrez", "tuxtla gutierrez")
+datos1$ciudad <- str_replace(datos1$ciudad, "guanajuato", "leon")
+```
+
+```{r}
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "5 de mayo zmm", "5 mayo zmm")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "arsa parque lindavista 2", "arsa parque lindavista")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "cruz dl sur", "cruz del sur")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "ace BENITO JUAREZ", "ace benito juarez")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "ace FRACChidalgo", "ace fracchidalgo")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "unopabellondelvallepue", "uno pabellon del valle pue")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "uno plazaquetzalcoatl", "uno plaza quetzalcoatl")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca barrio d san juan zumpango", "bca barrio de san juan zumpango")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca centromagnogdl", "bca centro magno gdl")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca forumtlaquepaque", "bca forum tlaquepaque")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca solumcomhornosgro", "bca solumcom hornos gro")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca sorianaelrosariodf", "bca soriana el rosario df")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca tecamaccentro", "bca tecamac centro")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "arsa rojogomezmex", "arsa rojo gomez mex")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca oasiscoyoacanmex", "bca oasis coyoacan mex")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca pabellondelvalleii", "bca pabellon del valle ii")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "bca plazacentellaedomex", "bca plaza centella edomex")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "arsa bahialindavista", "arsa bahia linda vista")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "arsa bahiaperisurbcos", "arsa bahia perisur bcos")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "arsa bahiatezontle", "arsa bahia tezontle")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "acr atlixconcentropue", "acr atlixcon centro pue")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "acr centroapizacotlx", "acr centro apizaco tlx")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "arsa kioskokindavista", "arsa kiosko lindavista")
+datos1$punto_de_venta <- str_replace(datos1$punto_de_venta, "arsa multialamedas", "arsa multi alamedas")
+```
+
+```{r}
+write.csv(datos1, file= "motolimpios.csv", row.names = FALSE)
+```
+
