@@ -1,0 +1,202 @@
+---
+title: "Actividad_7_Equipo_3_Analisis_Exploratorio_de_Datos"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+##Descripción a detalle de los datos:
+```{r}
+#Nuestros datos son el cotejo del número de ventas de celulares de la marca Hisense, teniendo información sobre los puntos de venta (Zona, Estado, Ciudad, Latitud y Longitud), proporcionado también la fecha en que el equipo fue vendido; considerando mes y año, además de eso nos muestra el costo promedio de cada venta. Referente a la información del equipo, en nuestra base de datos tenemos el sku y gamma del equipo vendido.
+```
+
+##Descripción general de las variables más importantes:
+```{r}
+#fecha: Fecha de la venta del equipo.
+#mes: Mes de la venta del equipo.
+#anio: año de la venta del equipo.
+#num_ventas: Unidades vendidas del equipo.
+#sku: Número de serie del equipo vendido.
+#marca: Marca del equipo vendido.
+#gamma: Categoría del equipo en el mercado.
+#costo_promedio: Costo promedio de los equipos vendidos.
+#zona: Zona donde se vendió el equipo.
+#estado: Estado de la república donde se vendió el equipo.
+#ciudad: Ciudad donde se vendió el equipo.
+```
+
+```{r}
+#install.packages("sf")
+#install.packages("rgdal")
+```
+
+```{r}
+#Lectura de datos.
+library(tidyverse)
+library(ggplot2)
+library(sf)
+library(rgdal)
+datosE3 <- read.csv("C:/Users/Dell/Downloads/Noveno Semestre (Ago-Dic 2021)/Laboratorio de Diseño y Optimización de Operaciones/Equipo 3_Proyecto/datoslimpioshisense.csv")
+```
+
+
+```{r}
+#En este apartado, debido a que la base de datos presentaba todavía datos incongruentes, se procedio a registrar los datos de la ciudad "cdmx" como "cdmx" en la columna estado, de esta manera se agrega cdmx como otro estado de la república.
+for(i in 1:23032){
+  if(datosE3[i,11] == "estado de mexico" & datosE3[i,12] == "cdmx"){
+    datosE3[i,11]<-"cdmx"
+  }
+}
+```
+
+
+```{r}
+#Estadísticas de nuestra base de datos.
+summary(datosE3)
+```
+
+#1. ¿Cuántos productos distintos tienen?
+```{r}
+#Tenemos 28 diferentes números de serie registrados para los equipos vendidos de la marca Hinsense de gamma baja.
+pregunta1 <- datosE3 %>% 
+  select(sku) %>%
+  arrange(sku) %>%
+  unique()
+
+head(pregunta1,10)
+```
+
+```{r}
+datosE3 %>% 
+select(marca) %>%
+  arrange(marca) %>%
+  unique()
+```
+```{r}
+datosE3 %>% 
+select(gamma) %>%
+  arrange(gamma) %>%
+  unique()
+```
+#2. ¿Meses de registro?
+```{r}
+#Tenemos registro de ventas de 10 meses durante los años 2019 y 2020. 
+pregunta2 <- datosE3 %>% 
+  select(mes) %>%
+  arrange(mes) %>%
+  unique()
+
+head(pregunta2,10)
+```
+
+```{r}
+a <- datosE3 %>% 
+select(anio) %>%
+  arrange(anio) %>%
+  unique()
+a
+```
+
+
+#3. ¿En cuántas ciudades y estados de la república mexicana se venden productos Hisense?
+```{r}
+#Los productos Hisense se venden en 210 ciudades de la república mexicana.
+pregunta3 <- datosE3 %>%
+  select(ciudad) %>%
+  arrange(ciudad) %>%
+  unique()
+
+head(pregunta3,10)
+```
+
+```{r}
+#Los productos Hisense se venden a lo largo de 32 estados de la república mexicana.
+estados1 <- datosE3 %>%
+  select(estado) %>%
+  arrange(estado) %>%
+  unique()
+
+head(estados1,10)
+```
+#4. ¿Cuántas ventas registra Hisense?
+```{r}
+#Hisense registra 23,032 ventas a lo largo de los años 2019 y 2020.
+#Se ocultó la lista de ventas debido a la longitud que esta presenta.
+ventash <- datosE3 %>%select(num_ventas)
+head(ventash,10)
+```
+
+##Seleccionamos hacer gráficas de barras para todas las preguntas, debido al tipo de datos que manejamos, fue la manera más apropiada de representarlos.
+#5. ¿Cómo están las ventas distribuidas por los estados de la república?
+```{r, fig.height=4, fig.width=15}
+#En la siguiente gráfica se observan las ventas en los estados de la república en orden descendente.
+ggplot(datosE3, aes(x=forcats::fct_infreq(estado),fill = estado))+
+  geom_bar()
+```
+#6. ¿Cuáles son los estados con mayores ventas?
+```{r}
+#Los estados con mayores ventas son: Cdmx, Veracruz y Nuevo Leon considerando ventas arriba de 1500 u.
+
+#Ventas respecto al estado
+filter1 <- datosE3 %>%
+    group_by(estado)%>%
+    summarise(ventas=sum(num_ventas))
+filter1
+
+#Estados con mayores ventas
+graficaventas <- filter1 %>% arrange(-ventas)%>%
+  filter(ventas >=1500)
+graficaventas
+```   
+
+
+```{r, fig.height=4, fig.width=15}
+filtro2 <- datosE3%>%filter(estado %in% c("veracruz", "cdmx", "nuevo leon"))
+ggplot(filtro2, aes(x = forcats::fct_infreq(estado),fill= estado))+
+  geom_bar()
+```
+
+#7. Divide las ciudades del estado que más ventas tiene
+```{r}
+#Las ciudades con mayores ventas se enlistan a continuación, 8 ciudades pertenecientes al estado de Nuevo León, segundo estado con mayores ventas.
+caso1 <- datosE3%>%filter(estado=="nuevo leon")%>%
+  filter(anio=="2020")
+```
+
+```{r}
+caso1$ciudad%>%unique()
+```
+
+```{r, fig.height=4, fig.width=15}
+ggplot(caso1, aes(x=forcats::fct_infreq(ciudad),fill = ciudad))+
+  geom_bar()
+```
+
+#ANEXO
+Se intentó realiazar gráficas con la siguiente información, sin embargo, por características de la variable resultó complicado elaborarlas.
+
+#Mapa de acuerdo a las latitudes y logitudes que se proporcionan
+```{r}
+#ggplot() +  
+# geom_polygon(data=ciudad, aes(x=longitud, y=latitud, group=group), 
+#               fill="white", color="black") #Simplemente pasé las líneas a negro y el relleno a blanco fuera de aes().
+```
+#Ventas de acuerdo al mes
+```{r}
+#group_by y summarise
+
+filter3 <- datosE3 %>%
+    group_by(mes)%>%
+    summarise(ventas2=sum(num_ventas))
+filter3 %>% arrange(-ventas2)
+    
+```
+
+```{r}
+#ggplot(datosE3, aes(x = mes, y = )) +
+#geom_point(color="blue")+
+#geom_line(color="blue") +
+#theme_classic() +
+#geom_smooth(method = "lm")
+```
