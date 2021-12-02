@@ -1,0 +1,342 @@
+---
+title: "Actividad_6_Equipo02_ Limpieza_de_Datos"
+output:
+  pdf_document: default
+  html_document: default
+---
+# LABORATORIO DE DISEÑO Y OPTIMIZACIÓN DE OPERACIONES
+
+# Ana Luisa Masetto Herrera
+
+# Integrantes:
+
+# Alejandra Santillan Palos
+# A01365626
+
+# Eda Eraldí Martínez Vázquez
+# A01365784
+
+# Justine Gutiérrez Mendoza
+# A01365878
+
+# José Luis Estrada Bastida
+# A01365811
+
+# Guillermo Martínez Ávila
+# A01365593
+
+# Fecha de entrega:
+# 13 de septiembre, 2021
+
+## 1. Análisis por Variable:
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+datos_limpios <- read.csv("equipo_2_zte_datos_sucios.csv")
+```
+
+```{r}
+str(datos_limpios)
+```
+
+## Análisis general de los datos
+
+Los datos crudos se encuentran en archivo con terminación “csv” correspondiente a un archivo de valores separados por comas que se puede visualizar con Microsoft Excel pero con mayor facilidad se puede trabajar en “R”. 
+
+Los datos tienen una dimensión de 24,089 registros o renglones en 14 variables o columnas.
+
+Diccionario de las variables en los conjuntos de datos:
+
+1.	punto_de_venta: Diferentes puntos de venta donde, donde la empresa tiene operaciones.
+.	Tipo de variable: Character.  Trata de un texto ya que específicamente es un carácter (no es número con el que se realice alguna operación)
+
+2.	fecha: Fecha en la que se hizo la compra del dispositivo móvil con formato DD/MM/AAAA
+ .	Tipo de variable: Character. Usado como texto ya que específicamente es un carácter y los “/” no indican ninguna operación sino que integran el carácter.
+
+3.	mes: Mes en el que se hizo la compra del dispositivo móvil con formato MM (1 para enero, 2 para febrero, 3 para marzo y así consecutivamente)
+ .	Tipo de variable: Factor. Es un elemento contribuye a la producción del resultado, el cual es dividido en diversos niveles, es decir que no se mueven en orden pero sí a través de ciertos grupos. Este elemento se le relaciona un nombre al número ya que con el número es posible la realización del proceso y obtención óptima del resultado y con el nombre la relación del número.
+
+4.	anio: Año en el que se hizo la compra del dispositivo móvil con formato AAAA
+ .	Tipo de variable: Factor. Elemento que para la contribución en los diversos resultados se maneja en niveles.
+
+5.	num_ventas: Cantidad de dispositivos que se vendieron.
+ .	Tipo de variable: Integer Variables tomadas como números enteros a pesar de que el proceso o resultado obtenido tenga algún decimal solo es tomado y usado numeros enteros.
+
+6.	sku: “Stock-keeping unit” es el código de referencia asignado a los dispositivos móviles para poder identificarlos en los inventarios.
+ .	Tipo de variable: Factor. Variable con cantidad finita de valores donde sus elementos contribuyen a la producción del resultado a través del uso de categorías.
+
+7.	marca: Se refiere a la marca del dispositivo móvil.
+ .	Tipo de variable: Character. Trata de un texto ya que es un carácter, el cual no es número con el que se realice alguna operación o influya a la obtención de los resultados.
+
+8.	gamma: Se refiere a la gamma(suma de productos divididos en cierta categoría) a la que pertenece el dispositivo móvil.
+ .	Tipo de variable: Character. Se trata de un texto ya que este es un carácter, el cual a pesar de ser resultado de una operación no se usa como número que afecte al resultado. 
+
+9.	costo_promedio: Precio o importe del dispositivo móvil.
+ .	Tipo de variable: Numeric. Esta variable representa un número con el cual se realizan operaciones aritméticas y estas logran definir ciertos resultados. 
+
+10.	zona: Zona de México donde se encuentra el punto de venta donde se hizo la compra.
+ .	Tipo de variable: Factor. Se realiza en diversos niveles (número finito) otorgando de la facilidad de  pertenencia a uno o más grupos o categorías.
+
+11.	estado: Estado de México donde se encuentra el punto de venta donde se hizo la compra.
+ .	Tipo de variable: Factor. Variable hecha de estructura de datos para el manejo categórico de la variable dando la facilidad de  pertenencia a uno o unos grupos o categorías.
+
+12.	ciudad: Cuidad donde se encuentra el punto de venta donde se hizo la compra.
+ .	Tipo de variable: Factor. Variable que pertenece a una o más categorías con una cantidad finita de valores.
+
+13.	latitud: Distancia angular que hay desde el punto de venta donde se hizo la venta, hasta el paralelo del ecuador; se mide en grados, minutos y segundos sobre los meridianos.
+ .	Tipo de variable: Numeric. Variable la cual representa algo(grados, minutos, segundos, etc) numéricamente  para lograr realizar operaciones aritméticas y así obtener resultados de operaciones.
+
+14.	longitud: Distancia angular que hay desde el punto de venta donde se hizo la venta, hasta el meridiano de Greenwich; se mide en grados, minutos y segundos sobre los meridianos.
+ .	Tipo de variable: Numeric.  Variable la cual representa algo (grados, minutos, segundos, etc)  numéricamente  para lograr realizar operaciones aritméticas y así obtener resultados de operaciones.
+
+
+## Detectar problemas de calidad 
+
+En la primer variable de puntos de venta se encuentran problemas de que algunos puntos son escritos en mayúsculas y en otras en minúsculas (hablando del mismo punto), también problemas de que una palabra omite una letra (por ejemplo azul sin a) y puntos de venta escritos con espacio y sin espacio (nuevamente hablando del mismo punto)
+
+En el caso de la variable de mes hay algunos meses que son escritos en letra y otros escritos en número.
+
+Para la variable de anio algunos vienen escritos con los 4 dígitos y otros con los últimos 2.
+
+La variable de marca viene escrita de 6 diferentes formas, en esta caso mayúsculas, minúsculas, con doble t, escrita 2 veces en mayúscula y en minúscula, y escrita con doble Z.
+
+En la variable de zona la zona centro occidente está mal escrita, occidente no tiene i.
+
+Para la variable de estado hay varios que no son estados como por ejemplo Monterrey que es una ciudad en Nuevo León. 
+
+Para las últimas variables de longitud y latitud hay errores de valores fuera de rango.
+
+Estos son problemas de calidad ya que son datos no homogéneos (puntos de venta, mes, anio marca), faltas de ortografía (marca, zona, puntos de venta) e incongruencia en los datos (estado, latitud y longitud).
+
+
+```{r}
+datos_limpios$punto_de_venta <- as.character(datos_limpios$punto_de_venta)
+datos_limpios$fecha <- as.character(datos_limpios$fecha)
+datos_limpios$mes <- as.factor(datos_limpios$mes)
+datos_limpios$anio <- as.factor(datos_limpios$anio)
+datos_limpios$num_ventas <- as.integer(datos_limpios$num_ventas)
+datos_limpios$sku <- as.factor(datos_limpios$sku)
+datos_limpios$marca <- as.character(datos_limpios$marca)
+datos_limpios$gamma <- as.character(datos_limpios$gamma)
+datos_limpios$costo_promedio <- as.numeric(datos_limpios$costo_promedio)
+datos_limpios$zona <- as.factor(datos_limpios$zona)
+datos_limpios$estado <- as.factor(datos_limpios$estado)
+datos_limpios$ciudad <- as.factor(datos_limpios$ciudad)
+datos_limpios$latitud <- as.numeric(datos_limpios$latitud)
+datos_limpios$longitud <- as.numeric(datos_limpios$longitud)
+```
+
+```{r}
+str(datos_limpios)
+```
+
+```{r}
+head(datos_limpios)
+```
+
+Punto de venta: Hay 5 puntos de venta escritos de manera errónea, hay que corregirlos.
+
+```{r}
+pdv<-datos_limpios %>% select(punto_de_venta) %>% unique()
+head(pdv)
+```
+
+```{r}
+datos_limpios$punto_de_venta <- str_replace(datos_limpios$punto_de_venta, "1poniente", "1 poniente")
+```
+
+```{r}
+datos_limpios$punto_de_venta <- str_replace(datos_limpios$punto_de_venta, "agua zul", "agua azul")
+```
+
+```{r}
+datos_limpios$punto_de_venta <- str_replace(datos_limpios$punto_de_venta, "ANGELOPOLIS", "angelopolis")
+```
+
+```{r}
+datos_limpios$punto_de_venta <- str_replace(datos_limpios$punto_de_venta, "caucl", "caucel")
+```
+
+```{r}
+datos_limpios$punto_de_venta <- str_replace(datos_limpios$punto_de_venta, "bca PABELLON valle", "bca pabellon valle")
+```
+
+```{r}
+pdv1<-datos_limpios %>% select(punto_de_venta) %>% unique()
+head(pdv1)
+```
+
+Fecha: Todos los registros están limpios, siguen el mismo formato. No requiere correcciones.
+Mes: Esta variable es numérica. Hay valores mal registrados (en lugar de número, son letras). Cambiar los 5 meses que están registrados con letras.
+
+```{r}
+datos_limpios %>% select(mes) %>% unique()
+```
+
+```{r}
+datos_limpios$mes <- str_replace(datos_limpios$mes, "NOV", "11")
+```
+
+```{r}
+datos_limpios$mes <- str_replace(datos_limpios$mes, "AGOST", "8")
+```
+
+```{r}
+datos_limpios$mes <- str_replace(datos_limpios$mes, "DIC", "12")
+```
+
+```{r}
+datos_limpios$mes <- str_replace(datos_limpios$mes, "OCT", "10")
+```
+
+```{r}
+datos_limpios$mes <- str_replace(datos_limpios$mes, "SEPT", "9")
+```
+
+```{r}
+datos_limpios %>% select(mes) %>% unique()
+```
+
+Año: La variable de año debe de seguir el formato de un valor numérico de 4 dígitos.
+
+```{r}
+datos_limpios %>% select(anio) %>% unique()
+```
+
+```{r}
+datos_limpios[381,4] <- "2020"
+datos_limpios[401,4] <- "2020"
+datos_limpios[423,4] <- "2020"
+datos_limpios[424,4] <- "2020"
+datos_limpios[425,4] <- "2020"
+datos_limpios[8297,4] <- "2020"
+datos_limpios[8298,4] <- "2020"
+datos_limpios[8299,4] <- "2020"
+datos_limpios[8317,4] <- "2020"
+datos_limpios[8318,4] <- "2020"
+datos_limpios[8319,4] <- "2020"
+datos_limpios[8322,4] <- "2020"
+datos_limpios[8323,4] <- "2020"
+datos_limpios[8331,4] <- "2020"
+datos_limpios[8332,4] <- "2020"
+```
+
+```{r}
+datos_limpios %>% select(anio) %>% unique()
+```
+
+Número de ventas: Todos los registros están limpios. No requiere correcciones.
+
+Sku: Todos los registros están limpios. No requiere correcciones.
+
+Marca: Hay 5 marcas que están escritas de forma errónea, hay que corregirlas.
+
+```{r}
+datos_limpios %>% select(marca) %>% unique()
+```
+
+```{r}
+datos_limpios$marca <- str_replace(datos_limpios$marca, "ZTE", "zte")
+```
+
+```{r}
+datos_limpios$marca <- str_replace(datos_limpios$marca, "ztte", "zte")
+```
+
+```{r}
+datos_limpios$marca <- str_replace(datos_limpios$marca, "zte-ZTE", "zte")
+```
+
+```{r}
+datos_limpios$marca <- str_replace(datos_limpios$marca, "zte-zte", "zte")
+```
+
+```{r}
+datos_limpios$marca <- str_replace(datos_limpios$marca, "zZte", "zte")
+```
+
+```{r}
+datos_limpios %>% select(marca) %>% unique()
+```
+
+Gamma: Todos los registros están limpios. No requiere correcciones.
+
+Costo: Todos los registros están limpios. No requiere correcciones.
+
+Zona: Hay 1 zona que esta mal escrita, hay que corregirlas.
+
+```{r}
+datos_limpios %>% select(zona) %>% unique()
+```
+
+```{r}
+datos_limpios$zona <- str_replace(datos_limpios$zona, "CENTRO OCCDENTE", "centro occidente")
+```
+
+```{r}
+datos_limpios %>% select(zona) %>% unique()
+```
+
+Estado: Hay 3 estados más de los que en realidad existen, detectarlos y corregirlos.
+
+```{r}
+estado <- datos_limpios %>% select(estado) %>% unique()
+head(estado)
+```
+
+```{r}
+datos_limpios$estado <- str_replace(datos_limpios$estado, "merida", "yucatan")
+```
+
+```{r}
+datos_limpios$estado <- str_replace(datos_limpios$estado, "monterrey", "nuevo leon")
+```
+
+```{r}
+datos_limpios$estado <- str_replace(datos_limpios$estado, "chetumal", "quintana roo")
+```
+
+```{r}
+estado1 <- datos_limpios %>% select(estado) %>% unique()
+head(estado1)
+```
+
+Ciudad: Todos los registros están limpios. No requiere correcciones.
+
+```{r}
+lat <- datos_limpios %>% select(latitud) %>% unique()
+head(lat)
+```
+```{r}
+datos_limpios %>% select(latitud) %>% max()
+```
+```{r}
+datos_limpios$latitud <- str_replace(datos_limpios$latitud, "1903991", "19.03991")
+```
+
+
+```{r}
+lat1 <- datos_limpios %>% select(latitud) %>% unique()
+head(lat1)
+```
+
+```{r}
+long <- datos_limpios %>% select(longitud) %>% unique()
+head(long)
+```
+```{r}
+datos_limpios %>% select(longitud) %>% min()
+```
+```{r}
+datos_limpios$longitud <- str_replace(datos_limpios$longitud, "-9824871", "-98.24871")
+```
+
+```{r}
+long1 <- datos_limpios %>% select(longitud) %>% unique()
+head(long1)
+```
+
